@@ -4,8 +4,7 @@ import React from "react";
 import { Sticker } from "@/types";
 
 import { StyleSheet, View } from "react-native";
-import CardGlobalEmojis from "./Cards/CardGlobalEmojis";
-import CardMainEmojis from "./Cards/CardMainEmojis";
+import StickerCard from "./Cards/Sticker";
 
 interface Props {
   defaultSize: number;
@@ -17,21 +16,28 @@ const EmojiViewer = ({ defaultSize, stickers }: Props) => {
   return (
     <View style={StyleSheet.absoluteFillObject}>
       {stickers.map((item: Sticker, index) => {
-        return item.type === "image" ? (
-          <CardMainEmojis
+        return (
+          <StickerCard
+            type={item.type}
             key={item.id}
             defaultCordinates={{ x: item.x, y: item.y }}
             defaultSize={defaultSize}
-            stickerSource={item.source}
-          />
-        ) : (
-          <CardGlobalEmojis
-            key={item.id}
-            defaultCordinates={{ x: item.x, y: item.y }}
-            defaultSize={defaultSize}
-            stickerText={item.emoji}
+            stickerValue={item.type === "image" ? item.source : item.emoji}
           />
         );
+        //   <CardMainEmojis
+        //     key={item.id}
+        //     defaultCordinates={{ x: item.x, y: item.y }}
+        //     defaultSize={defaultSize}
+        //     stickerSource={item.source}
+        //   />
+        // ) : (
+        //   <CardGlobalEmojis
+        //     key={item.id}
+        //     defaultCordinates={{ x: item.x, y: item.y }}
+        //     defaultSize={defaultSize}
+        //     stickerText={item.emoji}
+        //   />
       })}
     </View>
   );

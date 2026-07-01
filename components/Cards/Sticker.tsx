@@ -7,14 +7,16 @@ import Animated, {
 } from "react-native-reanimated";
 
 type Props = {
+  type: "image" | "emoji";
   defaultSize: number;
   defaultCordinates: { x: number; y: number };
-  stickerSource: ImageSourcePropType;
+  stickerValue: ImageSourcePropType | string;
 };
 
 export default function EmojiSticker({
   defaultSize,
-  stickerSource,
+  type,
+  stickerValue,
   defaultCordinates,
 }: Props) {
   const { scaleImage, onDrag, onDoubleTap, translateX, translateY } =
@@ -22,6 +24,9 @@ export default function EmojiSticker({
 
   const containerStyle = useAnimatedStyle(() => {
     return {
+      width: withSpring(scaleImage.value),
+      height: withSpring(scaleImage.value),
+
       transform: [
         { translateX: translateX.value },
         { translateY: translateY.value },
@@ -29,28 +34,35 @@ export default function EmojiSticker({
     };
   });
 
-  const imageAnimatedStyle = useAnimatedStyle(() => {
+  const emojiStyle = useAnimatedStyle(() => {
     return {
-      width: withSpring(scaleImage.value),
-      height: withSpring(scaleImage.value),
+      fontSize: withSpring(scaleImage.value),
     };
   });
 
   return (
     <GestureDetector gesture={onDrag}>
-      <Animated.View style={[containerStyle]}>
+      <Animated.View style={[styles.container, containerStyle]}>
         <GestureDetector gesture={onDoubleTap}>
-          <Animated.Image
-            source={stickerSource}
-            resizeMode="contain"
-            style={[
-              StyleSheet.absoluteFillObject,
-              imageAnimatedStyle,
-              { width: defaultSize, height: defaultSize },
-            ]}
-          />
+          {type === "image" ? (
+            <Animated.Image
+              source={stickerValue as ImageSourcePropType}
+              resizeMode="contain"
+              style={[{ width: "100%", height: "100%" }]}
+            />
+          ) : (
+            <Animated.Text style={[emojiStyle]}>
+              {stickerValue as string}
+            </Animated.Text>
+          )}
         </GestureDetector>
       </Animated.View>
     </GestureDetector>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+  },
+});
