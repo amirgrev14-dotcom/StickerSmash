@@ -27,3 +27,8 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 In the output, you'll find options to open the app in a
 
+want download this app in your mobile: 👇 📲
+
+click this and install SmashSticker app 
+https://expo.dev/accounts/amirgrev/projects/StickerSmash/builds/cccb6f26-3ab3-4239-a17c-85c2d3f2ad9c
+
