@@ -30,7 +30,7 @@ In the output, you'll find options to open the app in a
 want download this app in your mobile: 👇 📲
 
 use QR-code for download app:
-<img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/9f9187b2-1dbf-49ec-963c-573097ba219c" />
+<img width="320" height="320" alt="image" src="https://github.com/user-attachments/assets/9f9187b2-1dbf-49ec-963c-573097ba219c" />
 
 # or
 
