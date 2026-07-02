@@ -31,11 +31,12 @@ In the output, you'll find options to open the app in a terminal
 
 <div>
   <h4> use QR-code for download app:</h4>
-   <img width="320" height="320" alt="image" src="https://github.com/user-attachments/assets/9f9187b2-1dbf-49ec-963c-573097ba219c" />
+   <a href="https://expo.dev/accounts/amirgrev/projects/StickerSmash/builds/68af1110-9b77-4c0e-9990-c8a4e53cb6a1">
+      <img width="332" height="331" alt="Снимок экрана от 2026-07-02 22-43-40" src="https://github.com/user-attachments/assets/e8195054-61fa-4906-9f67-79f87e7cd0ce" />
+   </a>
 </div>
 
 # or
 
 click this and install SmashSticker app
-https://expo.dev/accounts/amirgrev/projects/StickerSmash/builds/cccb6f26-3ab3-4239-a17c-85c2d3f2ad9c
-
+https://expo.dev/accounts/amirgrev/projects/StickerSmash/builds/68af1110-9b77-4c0e-9990-c8a4e53cb6a1
