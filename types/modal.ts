@@ -1,0 +1,1 @@
+export type StickerModals = "Modal_library" | "Modal_app" | undefined;

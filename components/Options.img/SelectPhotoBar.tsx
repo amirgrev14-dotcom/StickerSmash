@@ -3,10 +3,10 @@ import React from "react";
 
 interface Props {
   onSelectPhoto: () => void;
-  useDefaultPhoto: () => void;
+  defaultPhoto: () => void;
 }
 
-const SelectionActionOptions = ({ onSelectPhoto, useDefaultPhoto }: Props) => {
+const SelectionActionOptions = ({ onSelectPhoto, defaultPhoto }: Props) => {
   return (
     <>
       {/* choose a photo */}
@@ -27,7 +27,7 @@ const SelectionActionOptions = ({ onSelectPhoto, useDefaultPhoto }: Props) => {
       <Button
         textLabel="Use this photo"
         colorLabel="white"
-        onPress={useDefaultPhoto}
+        onPress={defaultPhoto}
       />
     </>
   );

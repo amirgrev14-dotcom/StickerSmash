@@ -1,6 +1,8 @@
 import { Gesture } from "react-native-gesture-handler";
 import { useSharedValue } from "react-native-reanimated";
 
+
+
 export const useGesture = (defaultSize, defaultCordinates) => {
   const translateX = useSharedValue(defaultCordinates.x);
   const translateY = useSharedValue(defaultCordinates.y);

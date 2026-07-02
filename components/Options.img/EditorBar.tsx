@@ -3,14 +3,16 @@ import { Alert, Platform, StyleSheet, View } from "react-native";
 import CircleButton from "../Buttons/CircleButton";
 import IconButton from "../Buttons/IconButton";
 
-import { Sticker } from "@/types";
+import type { Sticker } from "@/types";
+import type { StickerModals } from "@/types/modal";
 import CustomDialog from "../Modals/CustomDialog";
-import ModalEmoji from "../Modals/ModalEmoji";
+import ModalAppSticker from "../Modals/ModalAppSticker";
+import ModalLibrarySticker from "../Modals/ModalLibrarySticker";
 
 interface Props {
   onReset: () => void;
   onSavePhoto: () => void;
-  onAddSticker: (emoji: Sticker, useModalSticker: "main" | "global") => void;
+  onAddSticker: (emoji: Sticker, usedModalSticker: StickerModals) => void;
 }
 
 const ChangeStateOptions = ({ onReset, onAddSticker, onSavePhoto }: Props) => {
@@ -19,12 +21,12 @@ const ChangeStateOptions = ({ onReset, onAddSticker, onSavePhoto }: Props) => {
   const [isOpenDialog, setIsOpenDialog] = React.useState(false);
 
   // functions for useState ()
-  const closeModal = (variant: "Modalglobal" | "Modalmain") => {
-    if (variant === "Modalglobal") {
+  const closeModal = (variant: StickerModals) => {
+    if (variant === "Modal_library") {
       return setIsOpenGlobalEmoji(false);
     }
 
-    if (variant === "Modalmain") {
+    if (variant === "Modal_app") {
       return setIsOpenMainEmoji(false);
     }
 
@@ -101,13 +103,19 @@ const ChangeStateOptions = ({ onReset, onAddSticker, onSavePhoto }: Props) => {
         ]}
       />
 
-      <ModalEmoji
-        isVisibleGlobal={isOpenGlobalEmoji}
-        isVisibleMain={isOpenMainEmoji}
-        onClose={closeModal}
-        onSelectSticker={(item: Sticker, useModalSticker) => {
-          useModalSticker === "global" ? onAddSticker(item, "global") : null;
-          useModalSticker === "main" ? onAddSticker(item, "main") : null;
+      <ModalAppSticker
+        isVisible={isOpenMainEmoji}
+        onClose={() => closeModal("Modal_app")}
+        onSelectSticker={(item: Sticker) => {
+          onAddSticker(item, "Modal_app");
+        }}
+      />
+
+      <ModalLibrarySticker
+        isVisible={isOpenGlobalEmoji}
+        onClose={() => closeModal("Modal_library")}
+        onSelectSticker={(item: Sticker) => {
+          onAddSticker(item, "Modal_library");
         }}
       />
     </View>

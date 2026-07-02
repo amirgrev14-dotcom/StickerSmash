@@ -1,55 +1,55 @@
 // components
+import EmojiViewer from "@/components/EmojiViewer";
 import ImageViewer from "@/components/ImageViewer";
+import EditorBar from "@/components/Options.img/EditorBar";
+import SelectPhotoBar from "@/components/Options.img/SelectPhotoBar";
 // react-native
+import { useEffect, useRef, useState } from "react";
 import { Alert, Platform, StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 // hooks
-import EmojiViewer from "@/components/EmojiViewer";
-import ChangeStateOptions from "@/components/Options.img/ChangeStateOptions";
-import SelectionActionOptions from "@/components/Options.img/SelectionActionOptions";
 import { usePickerImg } from "@/hooks/usePickerImg";
-import { EmojiSticker, ImageSticker, Sticker } from "@/types";
 import { generateUniquePosition } from "@/utils/randomCordinatScreen";
-
-import { useEffect, useRef, useState } from "react";
+// types
+import type { EmojiSticker, ImageSticker, Sticker } from "@/types";
+import type { BarsApp } from "@/types/bars";
+// for unique id sticker
 import "react-native-get-random-values";
 import { v4 as uuid } from "uuid";
-
 // for screen shot + save on device
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-
 // for Platform web
+import { StickerModals } from "@/types/modal";
 import { captureRef } from "react-native-view-shot";
 
-const PlaceholderImage = require("@/assets/images/background-image.png");
+const placeholderImage = require("@/assets/images/background-image.png");
 
 export default function Index() {
-  // State + variable
-  // for photo
+  // for image picker
   const { pickImageAync, selectedImage } = usePickerImg();
+  // for image width and height for random coordinates sticker
   const [ImageWidthHeight, setImageWidthHeight] = useState({
     width: 0,
     height: 0,
   });
-  const [defaultPhoto, setDefaultPhoto] = useState(PlaceholderImage);
 
-  // for options
-  const [showOptions, setShowOptions] = useState<
-    "selectAction" | "changeState"
-  >("selectAction");
+  // for select action bar or change state bar (editor bar or select photo bar)
+  const [showBar, setShowBar] = useState<BarsApp>("selectPhotoBar");
 
   // for stickers
   const [pickedEmojis, setPickedEmojis] = useState<Sticker[]>([]);
-  const [currentUseModal, setCurrentUseModal] = useState("");
+  const [currentUsedModal, setCurrentUsedModal] =
+    useState<StickerModals>(undefined);
 
-  // for screen shot + save on device
+  // for screen shot + save on device + please get permission use media app
   const imageRef = useRef(null);
   const [permissionResponse, requestPermission] =
     ImagePicker.useMediaLibraryPermissions();
 
   // ----------------------------------
 
+  // please get permission use media app
   useEffect(() => {
     if (!permissionResponse?.granted) {
       requestPermission();
@@ -58,18 +58,14 @@ export default function Index() {
 
   useEffect(() => {
     if (selectedImage) {
-      setShowOptions("changeState");
+      setShowBar("editorBar");
     }
   }, [selectedImage]);
 
   // functions for logical
   const onReset = () => {
-    setShowOptions("selectAction");
+    setShowBar("selectPhotoBar");
     setPickedEmojis([]);
-  };
-
-  const useWebPlatForm = () => {
-    // later code
   };
 
   const onSaveImageAsync = async () => {
@@ -79,7 +75,6 @@ export default function Index() {
       }
 
       if (Platform.OS === "android" || Platform.OS === "ios") {
-        console.log("save on device");
         const localUri = await captureRef(imageRef, {
           height: 450,
           quality: 1,
@@ -118,15 +113,12 @@ export default function Index() {
 
   const addSticker = (
     item: ImageSticker | EmojiSticker,
-    useModalSticker: "main" | "global",
+    usedModalSticker: StickerModals,
   ) => {
-    console.log("Canvas:", ImageWidthHeight);
-
     const { x, y } = generateUniquePosition(
       ImageWidthHeight.width,
       ImageWidthHeight.height,
     );
-    console.log("Sticker:", { x, y });
 
     if (ImageWidthHeight.width === 0 || ImageWidthHeight.height === 0) {
       return;
@@ -143,7 +135,7 @@ export default function Index() {
           y,
         },
       ]);
-      setCurrentUseModal(useModalSticker);
+      setCurrentUsedModal(usedModalSticker);
       return;
     }
 
@@ -160,33 +152,43 @@ export default function Index() {
           y,
         },
       ]);
-      setCurrentUseModal(useModalSticker);
+      setCurrentUsedModal(usedModalSticker);
       return;
     }
   };
-
   // -------------------------------------------------
 
   // functions Items component
-  const selectOptions = (isShow: string) => {
-    return isShow === "changeState" ? (
-      <ChangeStateOptions
-        onAddSticker={addSticker}
-        onSavePhoto={() => onSaveImageAsync()}
-        onReset={onReset}
-      />
-    ) : (
-      <SelectionActionOptions
-        onSelectPhoto={() => {
-          pickImageAync();
-        }}
-        useDefaultPhoto={() => {
-          setDefaultPhoto(PlaceholderImage);
-          setShowOptions("changeState");
-        }}
-      />
-    );
+  const selectBars = (isShowBar: BarsApp = "selectPhotoBar") => {
+    // selectPhotoBar
+
+    if (isShowBar === "selectPhotoBar") {
+      return (
+        <SelectPhotoBar
+          onSelectPhoto={() => {
+            pickImageAync();
+          }}
+          defaultPhoto={() => {
+            // we not need to add default photo, because we already have default photo in the app
+            setShowBar("editorBar");
+          }}
+        />
+      );
+    }
+
+    if (isShowBar === "editorBar") {
+      return (
+        <EditorBar
+          onAddSticker={addSticker}
+          onSavePhoto={() => onSaveImageAsync()}
+          onReset={onReset}
+        />
+      );
+    }
+
+    return null;
   };
+
   // ------------------------------------------
 
   return (
@@ -204,15 +206,14 @@ export default function Index() {
           style={[style.canvasImage]}
         >
           <ImageViewer
-            imageSource={defaultPhoto}
+            imageSource={selectedImage ? selectedImage : placeholderImage}
             selectedImage={selectedImage}
           />
 
-          {/* emoji is show if exist added */}
-
+          {/* sticker if ( pickedEmojis && excurrentUsedModalist ) showed */}
           {pickedEmojis && (
             <EmojiViewer
-              modalName={currentUseModal}
+              modalName={currentUsedModal}
               defaultSize={30}
               stickers={pickedEmojis}
             />
@@ -221,7 +222,7 @@ export default function Index() {
       </View>
 
       {/* buttons options */}
-      <View style={style.footerContainer}>{selectOptions(showOptions)}</View>
+      <View style={style.footerContainer}>{selectBars(showBar)}</View>
     </GestureHandlerRootView>
   );
 }
